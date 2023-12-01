@@ -34,6 +34,13 @@ def analyze_sentiment(text):
 # Function to detect language and translate if necessary
 def detect_and_translate(text):
     try:
+        # If the text is empty or is "no comment" / "no comments", return it without translation
+        if text == '' or text.lower() == 'no comment' or text.lower() == 'no comments':
+            return text
+        
+        # convert text to normal case
+        text = text.lower().capitalize()
+
         # Detect the language of the text
         source_language = detect(text)
 
@@ -72,16 +79,22 @@ def check_spelling(text):
 def write_to_csv_with_timestamp(data, headers):
     # Generate a timestamp for the file name
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    # Construct the file name
-    output_csv_file_path = f'output_{timestamp}.csv'
+    # Construct the output path and file name
+    output_csv_file_path = f'./output/output_{timestamp}.csv'
     
     # Specify 'utf-8-sig' encoding to handle BOM
     with open(output_csv_file_path, 'w', newline='', encoding='utf-8-sig') as csv_file:
-        csv_writer = csv.writer(csv_file)
+        # csv_writer = csv.writer(csv_file)
+        csv_writer = csv.DictWriter(csv_file, fieldnames=headers)
+
         # Write headers
-        csv_writer.writerow(headers)
+        # csv_writer.writerow(headers)
+        csv_writer.writeheader()
+
         # Write data
-        csv_writer.writerows(data)
+        # csv_writer.writerows(data)
+        for row in data:
+            csv_writer.writerow(row)
 
     return output_csv_file_path
 
@@ -90,12 +103,13 @@ def write_to_csv_with_timestamp(data, headers):
 #     print("Usage: python your_script.py <csv_file_path> <text_column_name>")
 #     sys.exit(1)
 
+# The first item, sys.argv[0], is the name of the script itself. The subsequent items are the arguments you passed.
 # Retrieve command-line arguments
 csv_file_path = sys.argv[1]
-# "GDOHPSA_DPOS_Survey_OP_Data.csv"
+# csv_file_path = "test_data_OP_V3.csv" # debug
 
 text_column_name = sys.argv[2]
-# "patient_comments"
+# text_column_name = "patient_comments" # debug
 
 # Record the start time
 start_time = time.time()
@@ -111,9 +125,10 @@ except ValueError:
     sys.exit(1)
 
 # Add new columns for sentiment analysis results, translated text, and misspelled words
-headers.append('Sentiment Score')
-headers.append('Translated Text')
-headers.append('Misspelled Words')
+# headers.append('Sentiment Score')
+# headers.append('Translated Text')
+# headers.append('Misspelled Words')
+headers.extend(['sentiment_score', 'translated_text', 'misspelled_words'])
 
 # Analyze sentiment, translate, and check spelling for each text in the CSV file
 for row in data:
