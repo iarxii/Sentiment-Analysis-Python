@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["test_data_OP_V3.csv", "patient_comments"]
+            "args": ["test_data_OP_V3.csv", "patient_comments", "test_data"]
         }
     ]
 }

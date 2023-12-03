@@ -3,5 +3,7 @@
 *.xlsx
 *.xlsm	
 *.csv
-```
 
+# ignore log files
+*.log
+log.txt
