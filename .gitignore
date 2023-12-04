@@ -7,3 +7,9 @@
 # ignore log files
 *.log
 log.txt
+
+backup/
+raw_data/
+```
+output:
+```
