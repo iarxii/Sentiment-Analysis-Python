@@ -208,9 +208,11 @@ duration = end_time - start_time
 print(f"Processing time (sec): {duration:.2f} seconds.")
 # calcule the duration in minutes
 duration /= 60
+duration_min = duration
 print(f"Processing time (min): {duration:.2f} minutes.")
 # calcule the duration in hours
 duration /= 60
+duration_hrs = duration
 print(f"Processing time (hrs): {duration:.2f} hours.")
 
 # user input for indicate end of script execution
@@ -230,8 +232,8 @@ with open('./log/log.txt', 'a') as log_file:
     log_file.write(f"Number of processes/cores: {num_processes}\n")
     log_file.write(f"Number of rows processed: {len(data)}\n")
     log_file.write(f"Processing time (sec): {duration:.2f} seconds.\n")
-    log_file.write(f"Processing time (min): {duration:.2f} minutes.\n")
-    log_file.write(f"Processing time (hrs): {duration:.2f} hours.\n")
+    log_file.write(f"Processing time (min): {duration_min:.2f} minutes.\n")
+    log_file.write(f"Processing time (hrs): {duration_hrs:.2f} hours.\n")
     log_file.write(f"Table output has been saved to '{output_csv_file_path}'.\n")
     log_file.write(f"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
 
