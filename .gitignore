@@ -10,8 +10,10 @@ log.txt
 
 backup/
 raw_data/
+chatgpt_screenshots
 ```
 output:
 ```
 quick.md
+text_data_headings.txt
 ```

@@ -1,7 +1,8 @@
-# code updated on 30/11/2023 # import nltk
+# code updated on 17/01/2024 
 
 # from tabulate import tabulate
 import os
+# import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 from langdetect import detect
 from googletrans import Translator
@@ -11,7 +12,8 @@ import csv
 import datetime
 import time
 import sys
-import concurrent.futures
+import os
+# import concurrent.futures
 
 # Function to read data from CSV file
 def read_csv(file_path, encoding='utf-8'):
@@ -178,17 +180,26 @@ except ValueError:
 # Add new columns for sentiment analysis results, translated text, and misspelled words
 headers.extend(['sentiment_score', 'translated_text', 'misspelled_words'])
 
-num_processes = os.cpu_count()
-print(f">>> CPU - Number of processes/cores: {num_processes}") #debug
+# Prompt the user for multiprocessing option
+use_multiprocessing = input("Do you want to use multiprocessing? (y/n): ")
 
-if __name__ == "__main__":
-    #***deprecated # multiprocessing - This is necessary on Windows to avoid recursive launching of subprocesses 
-    with Pool(processes=num_processes) as p:
-        data = p.map(process_row, data)
-    
+if use_multiprocessing.lower() == "y":
+    num_processes = os.cpu_count()
+    print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
+
+    if __name__ == "__main__":
+        #***deprecated # multiprocessing - This is necessary on Windows to avoid recursive launching of subprocesses 
+        with Pool(processes=num_processes) as p:
+            data = p.map(process_row, data)
+
     # concurrent.futures.ProcessPoolExecutor #does the same thing as multiprocessing.Pool but it crashes on the main thread
     # with concurrent.futures.ProcessPoolExecutor() as executor:
     #     data = list(executor.map(process_row, data))
+else:
+    num_processes = 1
+    print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
+    # Run the process sequentially without multiprocessing
+    data = list(map(process_row, data))
 
 # Record the end time
 end_time = time.time()
