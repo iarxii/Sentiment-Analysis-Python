@@ -16,9 +16,10 @@ Very simple:
 2. Download clone the repo on your computer
 3. Open VS Code and open/navigate to the cloned repo on your computer
 4. On the terminal, provide this command and hit enter (vals in <> indicate areguments, do not include the symbols <>):
-   >**`python sentiment_analysis.py <csv_file_path> <text_column_name> <output_prefix>`**
+   >**`python sentiment_analysis.py <csv_file_path> <text_column_name> <output_prefix> <limit_rows:-y/-n>`**
    a. **csv_file_path**: relative file path to csv containing data to be processed.
    b. **text_column_name**: the name of the column/header containing the textual data to be processed.
    c. **output_prefix**: this is the prefix/title that will be appended to the start of the name of the output file.
+   d. **limit_rows**: this is the switch to limit the rows to be processed to 100 and is used for debugging the script. Use -y for yes and -n for no.
 6. The script will process the data and provide outputs on the terminal.
 7. Processing speed is dependedent on internet connection, cpu cores & computer specs, and # and intensity of processes running on your computer.
