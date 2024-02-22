@@ -579,8 +579,8 @@ else:
     print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
     # Run the process sequentially without multiprocessing
     data = list(map(process_row, data))
-    print(f"data: {data}") # debug
-    sys.exit(1) # debug
+    # print(f"data: {data}") # debug
+    # sys.exit(1) # debug
 
 # Record the end time
 end_time = time.time()
