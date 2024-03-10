@@ -273,7 +273,6 @@ healthcare_lexicon_negative = {
     'Disrespectful': -0.9,
 }
 
-
 healthcare_lexicon_neutral = {
     # Neutral values
     'Referral': 0.0,
@@ -389,6 +388,30 @@ healthcare_lexicon_neutral = {
 # Merge the lexicons into a comprehensive lexicon
 healthcare_lexicon = {**healthcare_lexicon_positive, **healthcare_lexicon_negative, **healthcare_lexicon_neutral}
 
+def print_sa():
+    sa_art = """
+_____/\\\\\\\\\\\___________________________________________________________________________________________________________________        |
+ ___/\\\/////////\\\_________________________________________________________________________________________________________________       |
+  __\//\\\______\///___________________________________/\\\_______/\\\______________________________________________________/\\\______      |
+   ___\////\\\_____________/\\\\\\\\___/\\/\\\\\\____/\\\\\\\\\\\_\///_____/\\\\\__/\\\\\_______/\\\\\\\\___/\\/\\\\\\____/\\\\\\\\\\\_     |
+    ______\////\\\________/\\\/////\\\_\/\\\////\\\__\////\\\////___/\\\__/\\\///\\\\\///\\\___/\\\/////\\\_\/\\\////\\\__\////\\\////__    |
+     _________\////\\\____/\\\\\\\\\\\__\/\\\__\//\\\____\/\\\______\/\\\_\/\\\_\//\\\__\/\\\__/\\\\\\\\\\\__\/\\\__\//\\\____\/\\\______   |
+      __/\\\______\//\\\__\//\\///////___\/\\\___\/\\\____\/\\\_/\\__\/\\\_\/\\\__\/\\\__\/\\\_\//\\///////___\/\\\___\/\\\____\/\\\_/\\__  |
+       _\///\\\\\\\\\\\/____\//\\\\\\\\\\_\/\\\___\/\\\____\//\\\\\___\/\\\_\/\\\__\/\\\__\/\\\__\//\\\\\\\\\\_\/\\\___\/\\\____\//\\\\\___ |
+        ___\///////////_______\//////////__\///____\///______\/////____\///__\///___\///___\///____\//////////__\///____\///______\/////____|
+                                                                                                                                            |
+_____/\\\\\\\\\__________________________________/\\\\\\__________________________________________________                                  |
+ ___/\\\\\\\\\\\\\_______________________________\////\\\__________________________________________________                                 |
+  __/\\\/////////\\\_________________________________\/\\\_______/\\\__/\\\_______________/\\\______________                                |
+   _\/\\\_______\/\\\__/\\/\\\\\\____/\\\\\\\\\_______\/\\\______\//\\\/\\\___/\\\\\\\\\\_\///___/\\\\\\\\\\_                               |
+    _\/\\\\\\\\\\\\\\\_\/\\\////\\\__\////////\\\______\/\\\_______\//\\\\\___\/\\\//////___/\\\_\/\\\//////__                              |
+     _\/\\\/////////\\\_\/\\\__\//\\\___/\\\\\\\\\\_____\/\\\________\//\\\____\/\\\\\\\\\\_\/\\\_\/\\\\\\\\\\_                             |
+      _\/\\\_______\/\\\_\/\\\___\/\\\__/\\\/////\\\_____\/\\\_____/\\_/\\\_____\////////\\\_\/\\\_\////////\\\_                            |
+       _\/\\\_______\/\\\_\/\\\___\/\\\_\//\\\\\\\\/\\__/\\\\\\\\\_\//\\\\/_______/\\\\\\\\\\_\/\\\__/\\\\\\\\\\_                           |
+        _\///________\///__\///____\///___\////////\//__\/////////___\////________\//////////__\///__\//////////__                          |
+    """	
+    print(sa_art)
+
 # Function to read data from CSV file
 def read_csv(file_path, encoding='utf-8'):
     with open(file_path, 'r', encoding=encoding, errors='replace') as csv_file:
@@ -493,7 +516,6 @@ def process_row(row):
             'misspelled_words': 'x_error'
         }
     
-
 # Function to write data to CSV file with timestamp
 def write_to_csv_with_timestamp(data, headers, output_prefix):
     # Check if any of the processed rows are None
@@ -541,7 +563,6 @@ limit_rows = sys.argv[4] # use for debug
 # Record the start time
 start_time = time.time()
 
-
 # Read data from CSV file with specified encoding
 headers, data = read_csv(csv_file_path, encoding='utf-8')
 
@@ -567,6 +588,9 @@ if use_multiprocessing.lower() == "y":
     print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
 
     if __name__ == "__main__":
+        # print ASCII art
+        print_sa()
+
         #***deprecated # multiprocessing - This is necessary on Windows to avoid recursive launching of subprocesses 
         with Pool(processes=num_processes) as p:
             data = p.map(process_row, data)
@@ -577,10 +601,15 @@ if use_multiprocessing.lower() == "y":
 else:
     num_processes = 1
     print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
-    # Run the process sequentially without multiprocessing
-    data = list(map(process_row, data))
-    # print(f"data: {data}") # debug
-    # sys.exit(1) # debug
+
+    if __name__ == "__main__":
+        # print ASCII art
+        print_sa()
+
+        # Run the process sequentially without multiprocessing
+        data = list(map(process_row, data))
+        # print(f"data: {data}") # debug
+        # sys.exit(1) # debug
 
 # Record the end time
 end_time = time.time()
