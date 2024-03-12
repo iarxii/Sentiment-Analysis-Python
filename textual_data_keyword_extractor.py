@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import datetime
+import re
 
 def print_tdke():
     tdke_art = """
@@ -31,6 +32,20 @@ def print_tdke():
     """
     print(tdke_art)
 
+# function takes a record and a list of keywords, and returns a list of the keywords that are found in the record's text.
+# deprecate: this method uses the 'in' operator to check if a keyword is in the text. This is case-insensitive and does not account for word boundaries.
+def get_matched_words_nobound(record, keywords, text_column_name):
+    text = record[text_column_name].lower()  # Column containing the processed textual data
+    matched_words = [keyword for keyword in keywords if keyword.lower() in text]
+    return ', '.join(matched_words)
+
+#  function to match only full words using regular expressions
+def get_matched_words(record, keywords, text_column_name):
+    text = record[text_column_name].lower()  # Column containing the processed textual data
+    matched_words = [keyword for keyword in keywords if re.search(r'\b' + re.escape(keyword.lower()) + r'\b', text)]
+    return ', '.join(matched_words)
+
+# function takes a CSV file, a list of keywords, and a limit_rows flag, and writes to a new CSV file only the records that contain at least one of the keywords.
 def extract_records(input_csv_file, output_csv_file, keywords, limit_rows, text_column_name):
     extracted_records = []
 
@@ -40,16 +55,22 @@ def extract_records(input_csv_file, output_csv_file, keywords, limit_rows, text_
             for i, row in enumerate(reader):
                 if i >= 100:  # Limit rows to 100
                     break
-                text = row[text_column_name]  # Column containing the processed textual data
-                if any(keyword.lower() in text.lower() for keyword in keywords):
+                matched_words = get_matched_words(row, keywords, text_column_name)
+                if matched_words:  # Only add the record if there are matched words
+                    row['matched_words'] = matched_words
                     extracted_records.append(row)
         else:
             for row in reader:
-                text = row[text_column_name]  # Column containing the processed textual data
-                if any(keyword.lower() in text.lower() for keyword in keywords):
+                matched_words = get_matched_words(row, keywords, text_column_name)
+                if matched_words:  # Only add the record if there are matched words
+                    row['matched_words'] = matched_words
                     extracted_records.append(row)
 
     if extracted_records:
+        # Add matched words to each record
+        for record in extracted_records:
+            record['matched_words'] = get_matched_words(record, keywords, text_column_name)
+
         headers = extracted_records[0].keys()
         output_dir = './output/tdke/'
         os.makedirs(output_dir, exist_ok=True)  # Create output directory if it doesn't exist
@@ -107,6 +128,24 @@ if __name__ == "__main__":
 
     input_csv_file = csv_file_path
     output_csv_file = f'{output_prefix}_extracted_records.csv'
-    keywords = ['fall', 'falls', 'pressure', 'sore', 'sores', 'pressure injuries', 'pressure sores', 'abscond', 'absconded', 'abscondment', 'abscondments']
+    keywords = ['patient fall', 
+                'patient fell',
+                'falls', 
+                'falling',
+                'fell from bed',
+                'fall from bed',
+                'sore', 
+                'sores', 
+                'pressure injuries', 
+                'pressure sores', 
+                'bedsore',
+                'bedsores',
+                'bed sore',
+                'bed sores',
+                'abscond', 
+                'absconded', 
+                'absconding',
+                'abscondment', 
+                'abscondments']
 
     extract_records(input_csv_file, output_csv_file, keywords, limit_rows, text_column_name)

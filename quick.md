@@ -9,3 +9,7 @@
 # Ideal analysis command (modify the arguments to point to the desired csv file, column name and output filename prefix):
 
 `python sentiment_analysis.py ./raw_data/ideal/Ideal_Complaints_2023_24.csv 'Summary of Compliment' ideal_analysis_complaints -n`
+
+# TDKE command
+
+`python textual_data_keyword_extractor.py ./raw_data/tdke_input/<excel file name.csv> 'column name' output_file_prefix -n`
