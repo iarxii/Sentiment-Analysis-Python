@@ -8,6 +8,9 @@ This is a sentiment analysis python script that uses Natural Language Toolkit (n
 2. Make sure that the path value has been set for python: **Guide**: https://realpython.com/installing-python/
 3. Run the `setup_env.bat` script to set up the environment and install dependencies.
    > Double-click `setup_env.bat` or run it from the command line.
+4. Activate Virtual Envirnoment
+   > venv\Scripts\activate.bat
+
 
 Lets check if our environment is setup properly: https://realpython.com/installing-python/#how-to-check-your-python-version-on-windows
 
