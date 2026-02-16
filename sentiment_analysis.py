@@ -448,7 +448,7 @@ def detect_and_translate(text):
 
         # If the detected language is not English, translate the text to English
         if source_language != 'en':
-            print(f"Detected language: {source_language}") # debug
+            print(f"Detected language: {source_language}", file=sys.stderr) # debug
             translator = Translator()
             translation = translator.translate(text, src=source_language, dest='en')
             translated_text = translation.text
@@ -456,7 +456,7 @@ def detect_and_translate(text):
         else:
             return text
     except Exception as e:
-        print(f"Error during language detection or translation: {e}")
+        print(f"Error during language detection or translation: {e}", file=sys.stderr)
         return text
 
 # Function to check spelling errors
@@ -546,52 +546,53 @@ def write_to_csv_with_timestamp(data, headers, output_prefix):
 
     return output_csv_file_path
 
-# Check if command-line arguments are provided
-if len(sys.argv) != 5:
-    print("Usage: python your_script.py <csv_file_path> <text_column_name> <output_prefix> <limit_rows:-y/-n>")
-    sys.exit(1)
+# Only run batch processing when executed directly (not when imported)
+if __name__ == "__main__":
+    # Check if command-line arguments are provided
+    if len(sys.argv) != 5:
+        print("Usage: python your_script.py <csv_file_path> <text_column_name> <output_prefix> <limit_rows:-y/-n>")
+        sys.exit(1)
 
-# The first item, sys.argv[0], is the name of the script itself. The subsequent items are the arguments you passed.
-# Retrieve command-line arguments [1]
-csv_file_path = sys.argv[1]
+    # The first item, sys.argv[0], is the name of the script itself. The subsequent items are the arguments you passed.
+    # Retrieve command-line arguments [1]
+    csv_file_path = sys.argv[1]
 
-# Retrieve command-line arguments [2]
-text_column_name = sys.argv[2]
+    # Retrieve command-line arguments [2]
+    text_column_name = sys.argv[2]
 
-# Retrieve output file prefix command-line arguments [3]
-output_prefix = sys.argv[3]
+    # Retrieve output file prefix command-line arguments [3]
+    output_prefix = sys.argv[3]
 
-# argument to limit the rows to process
-limit_rows = sys.argv[4] # use for debug
+    # argument to limit the rows to process
+    limit_rows = sys.argv[4] # use for debug
 
-# Record the start time
-start_time = time.time()
+    # Record the start time
+    start_time = time.time()
 
-# Read data from CSV file with specified encoding
-headers, data = read_csv(csv_file_path, encoding='utf-8')
+    # Read data from CSV file with specified encoding
+    headers, data = read_csv(csv_file_path, encoding='utf-8')
 
-# Limit processed rows to 100 if limit_rows value is '-y'
-if limit_rows == '-y':
-    data = data[:100]
+    # Limit processed rows to 100 if limit_rows value is '-y'
+    if limit_rows == '-y':
+        data = data[:100]
 
-# Find the index of the column with the specified name
-try:
-    text_column_index = headers.index(text_column_name)
-except ValueError:
-    print(f"Column '{text_column_name}' not found in the CSV file.")
-    sys.exit(1)
+    # Find the index of the column with the specified name
+    try:
+        text_column_index = headers.index(text_column_name)
+    except ValueError:
+        print(f"Column '{text_column_name}' not found in the CSV file.")
+        sys.exit(1)
 
-# Add new columns for sentiment analysis results, translated text, and misspelled words
-headers.extend(['sentiment_score', 'translated_text', 'misspelled_words'])
+    # Add new columns for sentiment analysis results, translated text, and misspelled words
+    headers.extend(['sentiment_score', 'translated_text', 'misspelled_words'])
 
-# Prompt the user for multiprocessing option
-use_multiprocessing = input("Do you want to use multiprocessing? (y/n): ")
+    # Prompt the user for multiprocessing option
+    use_multiprocessing = input("Do you want to use multiprocessing? (y/n): ")
 
-if use_multiprocessing.lower() == "y":
-    num_processes = os.cpu_count()
-    print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
+    if use_multiprocessing.lower() == "y":
+        num_processes = os.cpu_count()
+        print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
 
-    if __name__ == "__main__":
         # print ASCII art
         print_sa()
 
@@ -599,14 +600,13 @@ if use_multiprocessing.lower() == "y":
         with Pool(processes=num_processes) as p:
             data = p.map(process_row, data)
 
-    # concurrent.futures.ProcessPoolExecutor #does the same thing as multiprocessing.Pool but it crashes on the main thread
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    #     data = list(executor.map(process_row, data))
-else:
-    num_processes = 1
-    print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
+        # concurrent.futures.ProcessPoolExecutor #does the same thing as multiprocessing.Pool but it crashes on the main thread
+        # with concurrent.futures.ProcessPoolExecutor() as executor:
+        #     data = list(executor.map(process_row, data))
+    else:
+        num_processes = 1
+        print(f">>> CPU - Number of processes/cores: {num_processes}") # debug
 
-    if __name__ == "__main__":
         # print ASCII art
         print_sa()
 
@@ -615,54 +615,55 @@ else:
         # print(f"data: {data}") # debug
         # sys.exit(1) # debug
 
-# Record the end time
-end_time = time.time()
+    # Record the end time
+    end_time = time.time()
 
-# Write the table data to the CSV file with timestamp
-output_csv_file_path = write_to_csv_with_timestamp(data, headers, output_prefix)
+    # Write the table data to the CSV file with timestamp
+    output_csv_file_path = write_to_csv_with_timestamp(data, headers, output_prefix)
 
-# Check if the output file path is None
-if output_csv_file_path is None:
-    print(f"Error writing to CSV file.")
-else:
-    print(f"Table output has been saved to '{output_csv_file_path}'.")
+    # Check if the output file path is None
+    if output_csv_file_path is None:
+        print(f"Error writing to CSV file.")
+    else:
+        print(f"Table output has been saved to '{output_csv_file_path}'.")
 
-# Calculate and print the duration of the script execution
-duration = end_time - start_time
-# calcule the duration in minutes
-print(f"Processing time (sec): {duration:.2f} seconds.")
-# calcule the duration in minutes
-duration /= 60
-duration_min = duration
-print(f"Processing time (min): {duration:.2f} minutes.")
-# calcule the duration in hours
-duration /= 60
-duration_hrs = duration
-print(f"Processing time (hrs): {duration:.2f} hours.")
+    # Calculate and print the duration of the script execution
+    duration = end_time - start_time
+    # calcule the duration in minutes
+    print(f"Processing time (sec): {duration:.2f} seconds.")
+    # calcule the duration in minutes
+    duration /= 60
+    duration_min = duration
+    print(f"Processing time (min): {duration:.2f} minutes.")
+    # calcule the duration in hours
+    duration /= 60
+    duration_hrs = duration
+    print(f"Processing time (hrs): {duration:.2f} hours.")
 
-# user input for indicate end of script execution
-input(f"Press Enter to exit...")
+    # user input for indicate end of script execution
+    input(f"Press Enter to exit...")
 
-# save to a log file with the script execution details, if log file is not found, it will be created
-if not os.path.exists('./log'):
-    os.makedirs('./log')
+    # save to a log file with the script execution details, if log file is not found, it will be created
+    if not os.path.exists('./log'):
+        os.makedirs('./log')
 
-with open('./log/log.txt', 'a') as log_file:
-    log_file.write(f"Script execution details:\n")
-    # datetime object containing current date and time
-    now = datetime.datetime.now()
-    # dd/mm/YY H:M:S
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    log_file.write(f"Date and time: {dt_string}\n")
-    log_file.write(f"CSV file path: {csv_file_path}\n")
-    log_file.write(f"Text column name: {text_column_name}\n")
-    log_file.write(f"Output prefix: {output_prefix}\n")
-    log_file.write(f"Number of processes/cores: {num_processes}\n")
-    log_file.write(f"Number of rows processed: {len(data)}\n")
-    log_file.write(f"Processing time (sec): {duration:.2f} seconds.\n")
-    log_file.write(f"Processing time (min): {duration_min:.2f} minutes.\n")
-    log_file.write(f"Processing time (hrs): {duration_hrs:.2f} hours.\n")
-    log_file.write(f"Table output has been saved to '{output_csv_file_path}'.\n")
-    log_file.write(f"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
+    with open('./log/log.txt', 'a') as log_file:
+        log_file.write(f"Script execution details:\n")
+        # datetime object containing current date and time
+        now = datetime.datetime.now()
+        # dd/mm/YY H:M:S
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        log_file.write(f"Date and time: {dt_string}\n")
+        log_file.write(f"CSV file path: {csv_file_path}\n")
+        log_file.write(f"Text column name: {text_column_name}\n")
+        log_file.write(f"Output prefix: {output_prefix}\n")
+        log_file.write(f"Number of processes/cores: {num_processes}\n")
+        log_file.write(f"Number of rows processed: {len(data)}\n")
+        log_file.write(f"Processing time (sec): {duration:.2f} seconds.\n")
+        log_file.write(f"Processing time (min): {duration_min:.2f} minutes.\n")
+        log_file.write(f"Processing time (hrs): {duration_hrs:.2f} hours.\n")
+        log_file.write(f"Table output has been saved to '{output_csv_file_path}'.\n")
+        log_file.write(f"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
 
-# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
