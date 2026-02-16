@@ -523,6 +523,10 @@ def write_to_csv_with_timestamp(data, headers, output_prefix):
     # if not data:
     #     return None
     
+    # Ensure output directory exists
+    if not os.path.exists('./output'):
+        os.makedirs('./output')
+
     # Generate a timestamp for the file name
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     # Construct the output path and file name
@@ -640,6 +644,9 @@ print(f"Processing time (hrs): {duration:.2f} hours.")
 input(f"Press Enter to exit...")
 
 # save to a log file with the script execution details, if log file is not found, it will be created
+if not os.path.exists('./log'):
+    os.makedirs('./log')
+
 with open('./log/log.txt', 'a') as log_file:
     log_file.write(f"Script execution details:\n")
     # datetime object containing current date and time

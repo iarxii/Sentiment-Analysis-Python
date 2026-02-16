@@ -4,11 +4,10 @@ This is a sentiment analysis python script that uses Natural Language Toolkit (n
 
 # Prerequitites
 
-1. You will have to have python 3.11 installed on your computer. **Download**: https://www.python.org/downloads/
+1. You will have to have python 3.10.9 installed on your computer. **Download**: https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe
 2. Make sure that the path value has been set for python: **Guide**: https://realpython.com/installing-python/
-3. You will have to install the required libraries used in this script.
-   > On the command line, type this command to download and install libraries (ps: multiprocessing library is preinstalled with Python):
-   > `pip install nltk langdetect googletrans spellchecker`
+3. Run the `setup_env.bat` script to set up the environment and install dependencies.
+   > Double-click `setup_env.bat` or run it from the command line.
 
 Lets check if our environment is setup properly: https://realpython.com/installing-python/#how-to-check-your-python-version-on-windows
 

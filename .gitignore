@@ -3,7 +3,7 @@
 *.xlsx
 *.xlsm	
 *.csv
-
+venv
 # ignore log files
 *.log
 log.txt
